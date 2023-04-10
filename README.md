@@ -7,3 +7,5 @@ Düzenli ifadeleri türetmek oldukça yorucu ve sıkıcı bir süreç. Bu yüzde
 ```
 pnpm install && pnpm dev
 ```
+
+`.env` dosyasında `OPENAI_API_KEY` ve `CHATGPT_MODEL` için kendi değer tanımlarınızı yapmayı unutmayın.
