@@ -1,124 +1,83 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
+import {useState} from "react";
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+	const [loading, setLoading] = useState(false)
+	const [query, setQuery] = useState('')
+	const [result, setResult] = useState(false)
+	const [error, setError] = useState(false)
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+	const submitHandle = e => {
+		e.preventDefault()
+		setLoading(true)
+		fetch('/api/generate-regex', {
+			method: 'post',
+			body: JSON.stringify({
+				query
+			})
+		})
+			.then(res => res.json())
+			.then(res => {
+				if (res?.error) {
+					setError('Regex deseni üretemiyorum, doğru bir şey istediğinden emin misin? LAN.')
+					setResult(false)
+				} else {
+					setResult(res)
+					setError(false)
+				}
+				setQuery('')
+			})
+			.finally(() => setLoading(false))
+	}
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+	return (
+		<div className="container mx-auto my-6">
+			<header className="border-b pb-6 mb-6 flex items-center justify-between">
+				<div>
+					<h6 className="flex items-center gap-x-2 text-xl font-bold">
+						REGEX<span className="bg-yellow-500 rounded-md px-4 py-1 text-black">HUB</span>
+					</h6>
+					<p className="text-base font-medium text-zinc-600 mt-2">
+						İhtiyacınız olan regex üretim aracı!
+					</p>
+				</div>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
+				<form onSubmit={submitHandle} className="flex gap-x-4">
+					<textarea
+						value={query}
+						onChange={e => setQuery(e.target.value)}
+						placeholder="Nasıl bir desene ihtiyacın var?"
+						className="h-[100px] w-[400px] bg-zinc-100 outline-none focus:bg-zinc-200 p-4 resize-none rounded-md text-[15px] font-medium"
+					/>
+					<button
+						disabled={!query || loading}
+						className="h-10 px-5 rounded-md bg-yellow-500 text-white text-sm font-medium disabled:opacity-50 disabled:pointer-events-none">
+						{loading ? '...' : 'ÜRET'}
+					</button>
+				</form>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+			</header>
+
+			{error && (
+				<div className="bg-red-500 text-white p-4 rounded-md text-[15px] text-center">
+					{error}
+				</div>
+			)}
+
+			{result && (
+				<div>
+					<h1 className="text-2xl font-medium text-zinc-400 mb-4">{result.description}</h1>
+					<div className="bg-black text-white rounded-md mb-6">
+						<h6 className="pt-4 pl-4 font-medium text-xs text-zinc-500">Regex Deseni</h6>
+						<pre className="font-mono p-4">{result.pattern}</pre>
+					</div>
+
+					<h3 className="text-xl font-bold mb-3">Örnek Kullanımı</h3>
+
+					<pre className="bg-black p-4 rounded-md font-mono text-white text-[15px]">{result.example}</pre>
+				</div>
+			)}
+
+		</div>
+	)
 }
